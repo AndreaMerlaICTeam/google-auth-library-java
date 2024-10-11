@@ -207,7 +207,7 @@ public class PluggableAuthHandlerTest {
 
     InternalProcessBuilder processBuilder =
         buildInternalProcessBuilder(
-            new HashMap<>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
+            new HashMap<String, String>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
 
     PluggableAuthHandler handler = new PluggableAuthHandler(environmentProvider, processBuilder);
 
@@ -330,7 +330,7 @@ public class PluggableAuthHandlerTest {
                   responses.get(i).toString().getBytes(StandardCharsets.UTF_8)));
 
       InternalProcessBuilder processBuilder =
-          buildInternalProcessBuilder(new HashMap<>(), mockProcess, options.getExecutableCommand());
+          buildInternalProcessBuilder(new HashMap<String, String>(), mockProcess, options.getExecutableCommand());
 
       PluggableAuthHandler handler = new PluggableAuthHandler(environmentProvider, processBuilder);
 
@@ -362,7 +362,7 @@ public class PluggableAuthHandlerTest {
     environmentProvider.setEnv("GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES", "1");
 
     // Build output_file.
-    File file = File.createTempFile("output_file", /* suffix= */ null, /* directory= */ null);
+      final File file = File.createTempFile("output_file", /* suffix= */ null, /* directory= */ null);
     file.deleteOnExit();
 
     // Options with output file specified.
@@ -392,7 +392,7 @@ public class PluggableAuthHandlerTest {
     // Mock executable handling that does nothing since we are using the output file.
     Process mockProcess = Mockito.mock(Process.class);
     InternalProcessBuilder processBuilder =
-        buildInternalProcessBuilder(new HashMap<>(), mockProcess, options.getExecutableCommand());
+        buildInternalProcessBuilder(new HashMap<String, String>(), mockProcess, options.getExecutableCommand());
 
     // Remove expiration_time from the executable responses.
     GenericJson oidcResponse = buildOidcResponse();
@@ -437,7 +437,7 @@ public class PluggableAuthHandlerTest {
     environmentProvider.setEnv("GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES", "1");
 
     // Build output_file.
-    File file = File.createTempFile("output_file", /* suffix= */ null, /* directory= */ null);
+      final File file = File.createTempFile("output_file", /* suffix= */ null, /* directory= */ null);
     file.deleteOnExit();
 
     OAuth2Utils.writeInputStreamToFile(
@@ -471,7 +471,7 @@ public class PluggableAuthHandlerTest {
     // Mock executable handling that does nothing since we are using the output file.
     Process mockProcess = Mockito.mock(Process.class);
     InternalProcessBuilder processBuilder =
-        buildInternalProcessBuilder(new HashMap<>(), mockProcess, options.getExecutableCommand());
+        buildInternalProcessBuilder(new HashMap<String, String>(), mockProcess, options.getExecutableCommand());
 
     PluggableAuthHandler handler = new PluggableAuthHandler(environmentProvider, processBuilder);
 
@@ -493,7 +493,7 @@ public class PluggableAuthHandlerTest {
     environmentProvider.setEnv("GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES", "1");
 
     // Build output_file.
-    File file = File.createTempFile("output_file", /* suffix= */ null, /* directory= */ null);
+      final File file = File.createTempFile("output_file", /* suffix= */ null, /* directory= */ null);
     file.deleteOnExit();
 
     OAuth2Utils.writeInputStreamToFile(
@@ -527,7 +527,7 @@ public class PluggableAuthHandlerTest {
     // Mock executable handling that does nothing since we are using the output file.
     Process mockProcess = Mockito.mock(Process.class);
     InternalProcessBuilder processBuilder =
-        buildInternalProcessBuilder(new HashMap<>(), mockProcess, options.getExecutableCommand());
+        buildInternalProcessBuilder(new HashMap<String, String>(), mockProcess, options.getExecutableCommand());
 
     PluggableAuthHandler handler = new PluggableAuthHandler(environmentProvider, processBuilder);
 
@@ -547,7 +547,7 @@ public class PluggableAuthHandlerTest {
     environmentProvider.setEnv("GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES", "1");
 
     // Build output_file.
-    File file = File.createTempFile("output_file", /* suffix= */ null, /* directory= */ null);
+      final File file = File.createTempFile("output_file", /* suffix= */ null, /* directory= */ null);
     file.deleteOnExit();
 
     // Create an expired response.
@@ -592,7 +592,7 @@ public class PluggableAuthHandlerTest {
                 buildOidcResponse().toString().getBytes(StandardCharsets.UTF_8)));
 
     InternalProcessBuilder processBuilder =
-        buildInternalProcessBuilder(new HashMap<>(), mockProcess, options.getExecutableCommand());
+        buildInternalProcessBuilder(new HashMap<String, String>(), mockProcess, options.getExecutableCommand());
 
     PluggableAuthHandler handler = new PluggableAuthHandler(environmentProvider, processBuilder);
 
@@ -626,7 +626,7 @@ public class PluggableAuthHandlerTest {
 
     InternalProcessBuilder processBuilder =
         buildInternalProcessBuilder(
-            new HashMap<>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
+            new HashMap<String, String>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
 
     PluggableAuthHandler handler = new PluggableAuthHandler(environmentProvider, processBuilder);
 
@@ -660,7 +660,7 @@ public class PluggableAuthHandlerTest {
 
     InternalProcessBuilder processBuilder =
         buildInternalProcessBuilder(
-            new HashMap<>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
+            new HashMap<String, String>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
 
     PluggableAuthHandler handler = new PluggableAuthHandler(environmentProvider, processBuilder);
 
@@ -858,7 +858,7 @@ public class PluggableAuthHandlerTest {
 
     InternalProcessBuilder processBuilder =
         buildInternalProcessBuilder(
-            new HashMap<>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
+            new HashMap<String, String>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
     PluggableAuthHandler handler = new PluggableAuthHandler(environmentProvider, processBuilder);
 
     // Call getExecutableResponse().
@@ -890,7 +890,7 @@ public class PluggableAuthHandlerTest {
 
     InternalProcessBuilder processBuilder =
         buildInternalProcessBuilder(
-            new HashMap<>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
+            new HashMap<String, String>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
 
     PluggableAuthHandler handler = new PluggableAuthHandler(environmentProvider, processBuilder);
 
@@ -923,7 +923,7 @@ public class PluggableAuthHandlerTest {
 
     InternalProcessBuilder processBuilder =
         buildInternalProcessBuilder(
-            new HashMap<>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
+            new HashMap<String, String>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
 
     PluggableAuthHandler handler = new PluggableAuthHandler(environmentProvider, processBuilder);
 
@@ -962,7 +962,7 @@ public class PluggableAuthHandlerTest {
 
     InternalProcessBuilder processBuilder =
         buildInternalProcessBuilder(
-            new HashMap<>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
+            new HashMap<String, String>(), mockProcess, DEFAULT_OPTIONS.getExecutableCommand());
 
     PluggableAuthHandler handler = new PluggableAuthHandler(environmentProvider, processBuilder);
 
@@ -1016,7 +1016,7 @@ public class PluggableAuthHandlerTest {
   }
 
   private static InternalProcessBuilder buildInternalProcessBuilder(
-      Map<String, String> currentEnv, Process process, String command) {
+          final Map<String, String> currentEnv, final Process process, String command) {
     return new InternalProcessBuilder() {
 
       @Override

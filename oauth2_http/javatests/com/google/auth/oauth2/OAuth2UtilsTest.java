@@ -36,6 +36,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 /** Tests for {@link OAuth2Utils}. */
 public class OAuth2UtilsTest {
@@ -53,49 +54,61 @@ public class OAuth2UtilsTest {
 
   @Test
   public void testEmptyUsername_throws() {
-    String username = "";
-    String password = "testPassword";
+      final String username = "";
+      final String password = "testPassword";
 
     assertThrows(
         IllegalArgumentException.class,
-        () -> {
-          generateBasicAuthHeader(username, password);
-        });
+            new ThrowingRunnable() {
+                @Override
+                public void run() throws Throwable {
+                    generateBasicAuthHeader(username, password);
+                }
+            });
   }
 
   @Test
   public void testEmptyPassword_throws() {
-    String username = "testUser";
-    String password = "";
+      final String username = "testUser";
+      final String password = "";
 
     assertThrows(
         IllegalArgumentException.class,
-        () -> {
-          generateBasicAuthHeader(username, password);
-        });
+            new ThrowingRunnable() {
+                @Override
+                public void run() throws Throwable {
+                    generateBasicAuthHeader(username, password);
+                }
+            });
   }
 
   @Test
   public void testNullUsername_throws() {
-    String username = null;
-    String password = "testPassword";
+      final String username = null;
+      final String password = "testPassword";
 
     assertThrows(
         IllegalArgumentException.class,
-        () -> {
-          generateBasicAuthHeader(username, password);
-        });
+            new ThrowingRunnable() {
+                @Override
+                public void run() throws Throwable {
+                    generateBasicAuthHeader(username, password);
+                }
+            });
   }
 
   @Test
   public void testNullPassword_throws() {
-    String username = "testUser";
-    String password = null;
+      final String username = "testUser";
+      final String password = null;
 
     assertThrows(
         IllegalArgumentException.class,
-        () -> {
-          generateBasicAuthHeader(username, password);
-        });
+            new ThrowingRunnable() {
+                @Override
+                public void run() throws Throwable {
+                    generateBasicAuthHeader(username, password);
+                }
+            });
   }
 }

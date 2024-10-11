@@ -117,8 +117,8 @@ public class OAuth2CredentialsTest extends BaseSerializationTest {
     Instant clientExpired = actualExpiration.minus(expirationMargin);
 
     AccessToken initialToken = new AccessToken(ACCESS_TOKEN, Date.from(actualExpiration));
-    AtomicInteger refreshCount = new AtomicInteger();
-    AtomicReference<AccessToken> currentToken = new AtomicReference<>(initialToken);
+    final AtomicInteger refreshCount = new AtomicInteger();
+    final AtomicReference<AccessToken> currentToken = new AtomicReference<>(initialToken);
 
     OAuth2Credentials credentials =
         new OAuth2Credentials(
@@ -879,7 +879,7 @@ public class OAuth2CredentialsTest extends BaseSerializationTest {
   @Ignore
   public void updateTokenValueBeforeWake() throws IOException, InterruptedException {
     final SettableFuture<AccessToken> refreshedTokenFuture = SettableFuture.create();
-    AccessToken refreshedToken = new AccessToken("2/MkSJoj1xsli0AccessToken_NKPY2", null);
+    final AccessToken refreshedToken = new AccessToken("2/MkSJoj1xsli0AccessToken_NKPY2", null);
     refreshedTokenFuture.set(refreshedToken);
 
     final ListenableFutureTask<OAuthValue> task =
@@ -887,11 +887,11 @@ public class OAuth2CredentialsTest extends BaseSerializationTest {
             new Callable<OAuthValue>() {
               @Override
               public OAuthValue call() throws Exception {
-                return OAuthValue.create(refreshedToken, new HashMap<>());
+                return OAuthValue.create(refreshedToken, new HashMap<String, List<String>>());
               }
             });
 
-    OAuth2Credentials creds =
+    final OAuth2Credentials creds =
         new OAuth2Credentials() {
           @Override
           public AccessToken refreshAccessToken() {

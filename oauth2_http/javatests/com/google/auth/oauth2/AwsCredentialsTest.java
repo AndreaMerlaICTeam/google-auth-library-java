@@ -1236,7 +1236,12 @@ public class AwsCredentialsTest extends BaseSerializationTest {
   public void builder_noSupplieOrCredSourceThrows() throws IOException {
     List<String> scopes = Arrays.asList("scope1", "scope2");
 
-    Supplier<AwsSecurityCredentials> testSupplier = () -> null;
+    Supplier<AwsSecurityCredentials> testSupplier = new Supplier<AwsSecurityCredentials>() {
+        @Override
+        public AwsSecurityCredentials get() {
+            return null;
+        }
+    };
 
     try {
       AwsCredentials credentials =

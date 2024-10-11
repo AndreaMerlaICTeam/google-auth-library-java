@@ -82,6 +82,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
 
 /**
  * OAuth2 credentials representing a Service Account for calling Google APIs.
@@ -527,10 +528,13 @@ public class ServiceAccountCredentials extends GoogleCredentials
     request.setUnsuccessfulResponseHandler(
         new HttpBackOffUnsuccessfulResponseHandler(backoff)
             .setBackOffRequired(
-                response -> {
-                  int code = response.getStatusCode();
-                  return OAuth2Utils.TOKEN_ENDPOINT_RETRYABLE_STATUS_CODES.contains(code);
-                }));
+                    new HttpBackOffUnsuccessfulResponseHandler.BackOffRequired() {
+                        @Override
+                        public boolean isRequired(HttpResponse response) {
+                            int code = response.getStatusCode();
+                            return OAuth2Utils.TOKEN_ENDPOINT_RETRYABLE_STATUS_CODES.contains(code);
+                        }
+                    }));
 
     request.setIOExceptionHandler(new HttpBackOffIOExceptionHandler(backoff));
     HttpResponse response;
@@ -584,10 +588,15 @@ public class ServiceAccountCredentials extends GoogleCredentials
     String assertion =
         createAssertionForIdToken(currentTime, tokenServerUri.toString(), targetAudience);
 
-    Map<String, Object> requestParams =
+    Map<String, String> requestParams =
         ImmutableMap.of("grant_type", GRANT_TYPE, "assertion", assertion);
-    GenericData tokenRequest = new GenericData();
-    requestParams.forEach(tokenRequest::set);
+    final GenericData tokenRequest = new GenericData();
+    requestParams.forEach(new BiConsumer<String, Object>() {
+        @Override
+        public void accept(String fieldName, Object value) {
+            tokenRequest.set(fieldName, value);
+        }
+    });
     UrlEncodedContent content = new UrlEncodedContent(tokenRequest);
 
     HttpRequest request = buildIdTokenRequest(tokenServerUri, transportFactory, content);
@@ -626,10 +635,15 @@ public class ServiceAccountCredentials extends GoogleCredentials
     String accessToken = responseMetadata.get(AuthHttpConstants.AUTHORIZATION).get(0);
 
     // Do not check user options. These params are always set regardless of options configured
-    Map<String, Object> requestParams =
+    Map<String, String> requestParams =
         ImmutableMap.of("audience", targetAudience, "includeEmail", "true", "useEmailAzp", "true");
-    GenericData tokenRequest = new GenericData();
-    requestParams.forEach(tokenRequest::set);
+    final GenericData tokenRequest = new GenericData();
+    requestParams.forEach(new BiConsumer<String, Object>() {
+        @Override
+        public void accept(String fieldName, Object value) {
+            tokenRequest.set(fieldName, value);
+        }
+    });
     UrlEncodedContent content = new UrlEncodedContent(tokenRequest);
 
     // Create IAM Token URI in this method instead of in the constructor because

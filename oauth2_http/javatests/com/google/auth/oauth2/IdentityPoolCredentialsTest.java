@@ -83,7 +83,12 @@ public class IdentityPoolCredentialsTest extends BaseSerializationTest {
           .build();
 
   private static final IdentityPoolSubjectTokenSupplier testProvider =
-      (ExternalAccountSupplierContext context) -> "testSubjectToken";
+          new IdentityPoolSubjectTokenSupplier() {
+              @Override
+              public String getSubjectToken(ExternalAccountSupplierContext context) throws IOException {
+                  return "testSubjectToken";
+              }
+          };
 
   private static final ExternalAccountSupplierContext emptyContext =
       ExternalAccountSupplierContext.newBuilder().setAudience("").setSubjectTokenType("").build();
@@ -325,12 +330,15 @@ public class IdentityPoolCredentialsTest extends BaseSerializationTest {
 
   @Test
   public void retrieveSubjectToken_providerThrowsError() throws IOException {
-    IOException testException = new IOException("test");
+    final IOException testException = new IOException("test");
 
     IdentityPoolSubjectTokenSupplier errorProvider =
-        (ExternalAccountSupplierContext context) -> {
-          throw testException;
-        };
+            new IdentityPoolSubjectTokenSupplier() {
+                @Override
+                public String getSubjectToken(ExternalAccountSupplierContext context) throws IOException {
+                    throw testException;
+                }
+            };
     IdentityPoolCredentials credentials =
         IdentityPoolCredentials.newBuilder(FILE_SOURCED_CREDENTIAL)
             .setCredentialSource(null)
@@ -347,18 +355,21 @@ public class IdentityPoolCredentialsTest extends BaseSerializationTest {
 
   @Test
   public void retrieveSubjectToken_supplierPassesContext() throws IOException {
-    ExternalAccountSupplierContext expectedContext =
+    final ExternalAccountSupplierContext expectedContext =
         ExternalAccountSupplierContext.newBuilder()
             .setAudience(FILE_SOURCED_CREDENTIAL.getAudience())
             .setSubjectTokenType(FILE_SOURCED_CREDENTIAL.getSubjectTokenType())
             .build();
 
     IdentityPoolSubjectTokenSupplier testSupplier =
-        (ExternalAccountSupplierContext context) -> {
-          assertEquals(expectedContext.getAudience(), context.getAudience());
-          assertEquals(expectedContext.getSubjectTokenType(), context.getSubjectTokenType());
-          return "token";
-        };
+            new IdentityPoolSubjectTokenSupplier() {
+                @Override
+                public String getSubjectToken(ExternalAccountSupplierContext context) throws IOException {
+                    assertEquals(expectedContext.getAudience(), context.getAudience());
+                    assertEquals(expectedContext.getSubjectTokenType(), context.getSubjectTokenType());
+                    return "token";
+                }
+            };
     IdentityPoolCredentials credentials =
         IdentityPoolCredentials.newBuilder(FILE_SOURCED_CREDENTIAL)
             .setCredentialSource(null)
@@ -718,7 +729,7 @@ public class IdentityPoolCredentialsTest extends BaseSerializationTest {
   @Test
   public void identityPoolCredentialSource_invalidSourceType() {
     try {
-      new IdentityPoolCredentialSource(new HashMap<>());
+      new IdentityPoolCredentialSource(new HashMap<String, Object>());
       fail("Should not be able to continue without exception.");
     } catch (IllegalArgumentException exception) {
       assertEquals(

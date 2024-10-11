@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 /** Tests for {@link PluggableAuthCredentials}. */
 public class PluggableAuthCredentialsTest extends BaseSerializationTest {
@@ -87,7 +88,12 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
   public void retrieveSubjectToken_shouldDelegateToHandler() throws IOException {
     PluggableAuthCredentials credential =
         PluggableAuthCredentials.newBuilder(CREDENTIAL)
-            .setExecutableHandler(options -> "pluggableAuthToken")
+            .setExecutableHandler(new ExecutableHandler() {
+                @Override
+                public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+                    return "pluggableAuthToken";
+                }
+            })
             .build();
     String subjectToken = credential.retrieveSubjectToken();
     assertEquals(subjectToken, "pluggableAuthToken");
@@ -101,10 +107,13 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
 
     final ExecutableOptions[] providedOptions = {null};
     ExecutableHandler executableHandler =
-        options -> {
-          providedOptions[0] = options;
-          return "pluggableAuthToken";
-        };
+            new ExecutableHandler() {
+                @Override
+                public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+                    providedOptions[0] = options;
+                    return "pluggableAuthToken";
+                }
+            };
 
     PluggableAuthCredentials credential =
         PluggableAuthCredentials.newBuilder(CREDENTIAL)
@@ -141,10 +150,13 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
 
     final ExecutableOptions[] providedOptions = {null};
     ExecutableHandler executableHandler =
-        options -> {
-          providedOptions[0] = options;
-          return "pluggableAuthToken";
-        };
+            new ExecutableHandler() {
+                @Override
+                public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+                    providedOptions[0] = options;
+                    return "pluggableAuthToken";
+                }
+            };
 
     PluggableAuthCredentials credential =
         PluggableAuthCredentials.newBuilder(CREDENTIAL)
@@ -182,7 +194,12 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
 
     PluggableAuthCredentials credential =
         PluggableAuthCredentials.newBuilder(CREDENTIAL)
-            .setExecutableHandler(options -> "pluggableAuthToken")
+            .setExecutableHandler(new ExecutableHandler() {
+                @Override
+                public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+                    return "pluggableAuthToken";
+                }
+            })
             .setTokenUrl(transportFactory.transport.getStsUrl())
             .setHttpTransportFactory(transportFactory)
             .build();
@@ -224,7 +241,12 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
 
     credential =
         PluggableAuthCredentials.newBuilder(credential)
-            .setExecutableHandler(options -> "pluggableAuthToken")
+            .setExecutableHandler(new ExecutableHandler() {
+                @Override
+                public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+                    return "pluggableAuthToken";
+                }
+            })
             .build();
 
     AccessToken accessToken = credential.refreshAccessToken();
@@ -267,7 +289,12 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
 
     credential =
         PluggableAuthCredentials.newBuilder(credential)
-            .setExecutableHandler(options -> "pluggableAuthToken")
+            .setExecutableHandler(new ExecutableHandler() {
+                @Override
+                public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+                    return "pluggableAuthToken";
+                }
+            })
             .build();
 
     AccessToken accessToken = credential.refreshAccessToken();
@@ -367,7 +394,7 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
   @Test
   public void pluggableAuthCredentialSource_missingExecutableField_throws() {
     try {
-      new PluggableAuthCredentialSource(new HashMap<>());
+      new PluggableAuthCredentialSource(new HashMap<String, Object>());
       fail("Should not be able to continue without exception.");
     } catch (IllegalArgumentException exception) {
       assertEquals(
@@ -396,7 +423,12 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
     List<String> scopes = Arrays.asList("scope1", "scope2");
 
     PluggableAuthCredentialSource source = buildCredentialSource();
-    ExecutableHandler handler = options -> "Token";
+    ExecutableHandler handler = new ExecutableHandler() {
+        @Override
+        public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+            return "Token";
+        }
+    };
 
     PluggableAuthCredentials credentials =
         PluggableAuthCredentials.newBuilder()
@@ -436,7 +468,12 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
     List<String> scopes = Arrays.asList("scope1", "scope2");
 
     PluggableAuthCredentialSource source = buildCredentialSource();
-    ExecutableHandler handler = options -> "Token";
+    ExecutableHandler handler = new ExecutableHandler() {
+        @Override
+        public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+            return "Token";
+        }
+    };
 
     PluggableAuthCredentials credentials =
         PluggableAuthCredentials.newBuilder()
@@ -475,7 +512,12 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
     List<String> scopes = Arrays.asList("scope1", "scope2");
 
     PluggableAuthCredentialSource source = buildCredentialSource();
-    ExecutableHandler handler = options -> "Token";
+    ExecutableHandler handler = new ExecutableHandler() {
+        @Override
+        public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+            return "Token";
+        }
+    };
 
     PluggableAuthCredentials credentials =
         PluggableAuthCredentials.newBuilder()
@@ -517,7 +559,12 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
     List<String> scopes = Arrays.asList("scope1", "scope2");
 
     PluggableAuthCredentialSource source = buildCredentialSource();
-    ExecutableHandler handler = options -> "Token";
+    ExecutableHandler handler = new ExecutableHandler() {
+        @Override
+        public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+            return "Token";
+        }
+    };
 
     PluggableAuthCredentials credentials =
         PluggableAuthCredentials.newBuilder()
@@ -557,7 +604,12 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
   public void createdScoped_clonedCredentialWithAddedScopes() throws IOException {
     PluggableAuthCredentials credentials =
         PluggableAuthCredentials.newBuilder(CREDENTIAL)
-            .setExecutableHandler(options -> "pluggableAuthToken")
+            .setExecutableHandler(new ExecutableHandler() {
+                @Override
+                public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+                    return "pluggableAuthToken";
+                }
+            })
             .setServiceAccountImpersonationUrl(SERVICE_ACCOUNT_IMPERSONATION_URL)
             .setQuotaProjectId("quotaProjectId")
             .setClientId("clientId")
@@ -588,9 +640,14 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
 
   @Test
   public void serialize() throws IOException, ClassNotFoundException {
-    PluggableAuthCredentials testCredentials =
+    final PluggableAuthCredentials testCredentials =
         PluggableAuthCredentials.newBuilder(CREDENTIAL)
-            .setExecutableHandler(options -> "pluggableAuthToken")
+            .setExecutableHandler(new ExecutableHandler() {
+                @Override
+                public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+                    return "pluggableAuthToken";
+                }
+            })
             .setServiceAccountImpersonationUrl(SERVICE_ACCOUNT_IMPERSONATION_URL)
             .setQuotaProjectId("quotaProjectId")
             .setClientId("clientId")
@@ -599,7 +656,12 @@ public class PluggableAuthCredentialsTest extends BaseSerializationTest {
             .build();
 
     // PluggableAuthCredentials are not serializable
-    assertThrows(NotSerializableException.class, () -> serializeAndDeserialize(testCredentials));
+    assertThrows(NotSerializableException.class, new ThrowingRunnable() {
+        @Override
+        public void run() throws Throwable {
+            PluggableAuthCredentialsTest.this.serializeAndDeserialize(testCredentials);
+        }
+    });
   }
 
   private static PluggableAuthCredentialSource buildCredentialSource() {

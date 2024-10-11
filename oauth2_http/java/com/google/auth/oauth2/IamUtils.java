@@ -138,8 +138,12 @@ class IamUtils {
     request.setUnsuccessfulResponseHandler(
         new HttpBackOffUnsuccessfulResponseHandler(backoff)
             .setBackOffRequired(
-                response ->
-                    IamUtils.IAM_RETRYABLE_STATUS_CODES.contains(response.getStatusCode())));
+                    new HttpBackOffUnsuccessfulResponseHandler.BackOffRequired() {
+                        @Override
+                        public boolean isRequired(HttpResponse response) {
+                            return IamUtils.IAM_RETRYABLE_STATUS_CODES.contains(response.getStatusCode());
+                        }
+                    }));
     request.setIOExceptionHandler(new HttpBackOffIOExceptionHandler(backoff));
 
     HttpResponse response = request.execute();

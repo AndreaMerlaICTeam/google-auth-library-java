@@ -543,7 +543,12 @@ public class GoogleCredentialsTest extends BaseSerializationTest {
     // Create copy with mock executable handler.
     PluggableAuthCredentials copy =
         PluggableAuthCredentials.newBuilder((PluggableAuthCredentials) credentials)
-            .setExecutableHandler(options -> "pluggableAuthToken")
+            .setExecutableHandler(new ExecutableHandler() {
+                @Override
+                public String retrieveTokenFromExecutable(ExecutableOptions options) throws IOException {
+                    return "pluggableAuthToken";
+                }
+            })
             .build();
 
     copy = copy.createScoped(SCOPES);

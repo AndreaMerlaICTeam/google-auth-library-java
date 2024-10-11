@@ -40,6 +40,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -79,11 +80,21 @@ public class ApiKeyCredentialsTest {
 
   @Test
   public void testNullApiKey_ThrowsException() {
-    assertThrows(IllegalArgumentException.class, () -> ApiKeyCredentials.create(null));
+    assertThrows(IllegalArgumentException.class, new ThrowingRunnable() {
+        @Override
+        public void run() throws Throwable {
+            ApiKeyCredentials.create(null);
+        }
+    });
   }
 
   @Test
   public void testBlankApiKey_ThrowsException() {
-    assertThrows(IllegalArgumentException.class, () -> ApiKeyCredentials.create(""));
+    assertThrows(IllegalArgumentException.class, new ThrowingRunnable() {
+        @Override
+        public void run() throws Throwable {
+            ApiKeyCredentials.create("");
+        }
+    });
   }
 }

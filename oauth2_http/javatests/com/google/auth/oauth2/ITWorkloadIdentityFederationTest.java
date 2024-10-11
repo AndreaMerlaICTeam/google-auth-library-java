@@ -258,13 +258,16 @@ public final class ITWorkloadIdentityFederationTest {
   public void identityPoolCredentials_withProgrammaticAuth() throws IOException {
 
     IdentityPoolSubjectTokenSupplier tokenSupplier =
-        (ExternalAccountSupplierContext context) -> {
-          try {
-            return generateGoogleIdToken(OIDC_AUDIENCE);
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        };
+            new IdentityPoolSubjectTokenSupplier() {
+                @Override
+                public String getSubjectToken(ExternalAccountSupplierContext context) throws IOException {
+                    try {
+                        return ITWorkloadIdentityFederationTest.this.generateGoogleIdToken(OIDC_AUDIENCE);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            };
 
     IdentityPoolCredentials identityPoolCredentials =
         IdentityPoolCredentials.newBuilder()

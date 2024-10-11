@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -374,15 +375,18 @@ public class UserAuthorizerTest {
 
   @Test
   public void testGetTokenResponseFromAuthCodeExchange_missingAuthCode_throws() {
-    UserAuthorizer authorizer =
+    final UserAuthorizer authorizer =
         UserAuthorizer.newBuilder().setClientId(CLIENT_ID).setScopes(DUMMY_SCOPES).build();
 
     assertThrows(
         NullPointerException.class,
-        () -> {
-          authorizer.getTokenResponseFromAuthCodeExchange(
-              /* code= */ null, BASE_URI, /* additionalParameters= */ null);
-        });
+            new ThrowingRunnable() {
+                @Override
+                public void run() throws Throwable {
+                    authorizer.getTokenResponseFromAuthCodeExchange(
+                            /* code= */ null, BASE_URI, /* additionalParameters= */ null);
+                }
+            });
   }
 
   @Test
@@ -398,7 +402,7 @@ public class UserAuthorizerTest {
         GRANTED_SCOPES_STRING,
         /* additionalParameters= */ null);
 
-    UserAuthorizer authorizer =
+    final UserAuthorizer authorizer =
         UserAuthorizer.newBuilder()
             .setClientId(CLIENT_ID)
             .setScopes(DUMMY_SCOPES)
@@ -408,10 +412,13 @@ public class UserAuthorizerTest {
     IOException e =
         assertThrows(
             IOException.class,
-            () -> {
-              authorizer.getTokenResponseFromAuthCodeExchange(
-                  CODE, BASE_URI, /* additionalParameters= */ null);
-            });
+                new ThrowingRunnable() {
+                    @Override
+                    public void run() throws Throwable {
+                        authorizer.getTokenResponseFromAuthCodeExchange(
+                                CODE, BASE_URI, /* additionalParameters= */ null);
+                    }
+                });
 
     assertTrue(
         e.getMessage()

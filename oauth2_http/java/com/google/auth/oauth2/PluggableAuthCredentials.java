@@ -139,11 +139,11 @@ public class PluggableAuthCredentials extends ExternalAccountCredentials {
    */
   @Override
   public String retrieveSubjectToken() throws IOException {
-    String executableCommand = config.getCommand();
-    String outputFilePath = config.getOutputFilePath();
-    int executableTimeoutMs = config.getTimeoutMs();
+    final String executableCommand = config.getCommand();
+    final String outputFilePath = config.getOutputFilePath();
+    final int executableTimeoutMs = config.getTimeoutMs();
 
-    Map<String, String> envMap = new HashMap<>();
+    final Map<String, String> envMap = new HashMap<>();
     envMap.put("GOOGLE_EXTERNAL_ACCOUNT_AUDIENCE", getAudience());
     envMap.put("GOOGLE_EXTERNAL_ACCOUNT_TOKEN_TYPE", getSubjectTokenType());
     // Always set to 0 for Workload Identity Federation.

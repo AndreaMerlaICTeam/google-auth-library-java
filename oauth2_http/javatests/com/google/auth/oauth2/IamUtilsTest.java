@@ -39,8 +39,12 @@ import com.google.api.client.http.HttpStatusCodes;
 import com.google.auth.ServiceAccountSigner;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
@@ -59,7 +63,7 @@ public class IamUtilsTest {
     // call is initialized with HttpCredentialsAdapter which will make a call to get the access
     // token
     credentials = Mockito.mock(ServiceAccountCredentials.class);
-    Mockito.when(credentials.getRequestMetadata(Mockito.any())).thenReturn(ImmutableMap.of());
+    Mockito.when(credentials.getRequestMetadata(Mockito.<URI>any())).thenReturn(ImmutableMap.<String, List<String>>of());
   }
 
   @Test
@@ -78,7 +82,7 @@ public class IamUtilsTest {
             credentials,
             transportFactory.getTransport(),
             expectedSignature,
-            ImmutableMap.of());
+                ImmutableMap.<String, Object>of());
     assertArrayEquals(expectedSignature, signature);
 
     assertEquals(1, transportFactory.getTransport().getNumRequests());
@@ -109,7 +113,7 @@ public class IamUtilsTest {
             credentials,
             transportFactory.getTransport(),
             expectedSignature,
-            ImmutableMap.of());
+                ImmutableMap.<String, Object>of());
     assertArrayEquals(expectedSignature, signature);
 
     // Expect that three requests are made (2 failures which are retries + 1 final requests which
@@ -145,7 +149,7 @@ public class IamUtilsTest {
             credentials,
             transportFactory.getTransport(),
             expectedSignature,
-            ImmutableMap.of());
+                ImmutableMap.<String, Object>of());
     assertArrayEquals(expectedSignature, signature);
 
     // Expect that three requests are made (3 failures which are retried + 1 final request which
@@ -158,9 +162,9 @@ public class IamUtilsTest {
   // will try one last time and the result will be reported back to the user.
   @Test
   public void sign_retryThreeTimes_exception() {
-    byte[] expectedSignature = {0xD, 0xE, 0xA, 0xD};
+    final byte[] expectedSignature = {0xD, 0xE, 0xA, 0xD};
 
-    MockIAMCredentialsServiceTransportFactory transportFactory =
+    final MockIAMCredentialsServiceTransportFactory transportFactory =
         new MockIAMCredentialsServiceTransportFactory();
     transportFactory.getTransport().setSignedBlob(expectedSignature);
     transportFactory.getTransport().setTargetPrincipal(CLIENT_EMAIL);
@@ -181,13 +185,17 @@ public class IamUtilsTest {
     ServiceAccountSigner.SigningException exception =
         assertThrows(
             ServiceAccountSigner.SigningException.class,
-            () ->
-                IamUtils.sign(
-                    CLIENT_EMAIL,
-                    credentials,
-                    transportFactory.getTransport(),
-                    expectedSignature,
-                    ImmutableMap.of()));
+                new ThrowingRunnable() {
+                    @Override
+                    public void run() throws Throwable {
+                        IamUtils.sign(
+                                CLIENT_EMAIL,
+                                credentials,
+                                transportFactory.getTransport(),
+                                expectedSignature,
+                                ImmutableMap.<String, Object>of());
+                    }
+                });
     assertTrue(exception.getMessage().contains("Failed to sign the provided bytes"));
     assertTrue(
         exception
@@ -202,9 +210,9 @@ public class IamUtilsTest {
 
   @Test
   public void sign_4xxError_noRetry_exception() {
-    byte[] expectedSignature = {0xD, 0xE, 0xA, 0xD};
+    final byte[] expectedSignature = {0xD, 0xE, 0xA, 0xD};
 
-    MockIAMCredentialsServiceTransportFactory transportFactory =
+    final MockIAMCredentialsServiceTransportFactory transportFactory =
         new MockIAMCredentialsServiceTransportFactory();
     transportFactory.getTransport().setSignedBlob(expectedSignature);
     transportFactory.getTransport().setTargetPrincipal(CLIENT_EMAIL);
@@ -216,13 +224,17 @@ public class IamUtilsTest {
     ServiceAccountSigner.SigningException exception =
         assertThrows(
             ServiceAccountSigner.SigningException.class,
-            () ->
-                IamUtils.sign(
-                    CLIENT_EMAIL,
-                    credentials,
-                    transportFactory.getTransport(),
-                    expectedSignature,
-                    ImmutableMap.of()));
+                new ThrowingRunnable() {
+                    @Override
+                    public void run() throws Throwable {
+                        IamUtils.sign(
+                                CLIENT_EMAIL,
+                                credentials,
+                                transportFactory.getTransport(),
+                                expectedSignature,
+                                ImmutableMap.<String, Object>of());
+                    }
+                });
     assertTrue(exception.getMessage().contains("Failed to sign the provided bytes"));
     assertTrue(
         exception

@@ -151,7 +151,7 @@ public class MockIAMCredentialsServiceTransport extends MockHttpTransport {
         String.format(IAM_SIGN_ENDPOINT, universeDomain, this.targetPrincipal);
     String iamIdTokenformattedUrl =
         String.format(IAM_ID_TOKEN_ENDPOINT_FORMAT, universeDomain, this.targetPrincipal);
-    ServerResponse serverResponse = serverResponses.poll();
+    final ServerResponse serverResponse = serverResponses.poll();
     // Status code was configured to be repeated until connection is terminated
     if (serverResponse.repeatServerResponse) {
       serverResponses.offerFirst(serverResponse);

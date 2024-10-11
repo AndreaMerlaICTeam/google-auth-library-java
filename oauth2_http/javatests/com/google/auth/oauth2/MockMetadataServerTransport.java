@@ -176,7 +176,7 @@ public class MockMetadataServerTransport extends MockHttpTransport {
     };
   }
 
-  private MockLowLevelHttpRequest getMockRequestForTokenEndpoint(String url) {
+  private MockLowLevelHttpRequest getMockRequestForTokenEndpoint(final String url) {
     return new MockLowLevelHttpRequest(url) {
       @Override
       public LowLevelHttpResponse execute() throws IOException {

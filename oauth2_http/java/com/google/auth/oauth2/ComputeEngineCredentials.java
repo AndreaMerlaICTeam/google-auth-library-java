@@ -162,7 +162,7 @@ public class ComputeEngineCredentials extends GoogleCredentials
   /** Clones the compute engine account with the specified scopes. */
   @Override
   public GoogleCredentials createScoped(Collection<String> newScopes) {
-    return createScoped(newScopes, ImmutableList.of());
+    return createScoped(newScopes, new ArrayList<String>());
   }
 
   /** Clones the compute engine account with the specified scopes and default scopes. */

@@ -44,11 +44,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import javax.annotation.Nullable;
 
 /**
@@ -193,7 +189,7 @@ final class PluggableAuthHandler implements ExecutableHandler {
     processBuilder.redirectErrorStream(true);
 
     // Start the process.
-    Process process = processBuilder.start();
+    final Process process = processBuilder.start();
 
     ExecutableResponse execResp;
     String executableOutput = "";
@@ -203,18 +199,21 @@ final class PluggableAuthHandler implements ExecutableHandler {
       // the process won't hang if the STDOUT buffer is filled.
       Future<String> future =
           executor.submit(
-              () -> {
-                BufferedReader reader =
-                    new BufferedReader(
-                        new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+                  new Callable<String>() {
+                      @Override
+                      public String call() throws Exception {
+                          BufferedReader reader =
+                                  new BufferedReader(
+                                          new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
 
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                  sb.append(line).append(System.lineSeparator());
-                }
-                return sb.toString().trim();
-              });
+                          StringBuilder sb = new StringBuilder();
+                          String line;
+                          while ((line = reader.readLine()) != null) {
+                              sb.append(line).append(System.lineSeparator());
+                          }
+                          return sb.toString().trim();
+                      }
+                  });
 
       boolean success = process.waitFor(options.getExecutableTimeoutMs(), TimeUnit.MILLISECONDS);
       if (!success) {

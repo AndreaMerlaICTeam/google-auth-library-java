@@ -31,6 +31,8 @@
 
 package com.google.auth.oauth2;
 
+import static java.util.stream.IntStream.rangeClosed;
+import static java.util.stream.Stream.of;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -63,6 +65,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -117,12 +121,22 @@ public class ComputeEngineCredentialsTest extends BaseSerializationTest {
   private static final List<String> SCOPES = Arrays.asList("foo", "bar");
   private static final String ACCESS_TOKEN_WITH_SCOPES = "1/MkSJoj1xsli0AccessTokenScoped_NKPY2";
   private static final Map<String, String> SCOPE_TO_ACCESS_TOKEN_MAP =
-      Stream.of(
+      of(
               new String[][] {
                 {"default", ACCESS_TOKEN},
                 {SCOPES.toString().replaceAll("\\s", ""), ACCESS_TOKEN_WITH_SCOPES},
               })
-          .collect(Collectors.toMap(data -> data[0], data -> data[1]));
+          .collect(Collectors.toMap(new Function<String[], String>() {
+              @Override
+              public String apply(String[] data) {
+                  return data[0];
+              }
+          }, new Function<String[], String>() {
+              @Override
+              public String apply(String[] data) {
+                  return data[1];
+              }
+          }));
 
   @Test
   public void buildTokenUrlWithScopes_null_scopes() {
@@ -688,7 +702,12 @@ public class ComputeEngineCredentialsTest extends BaseSerializationTest {
   public void refresh_non503_ioexception_throws() {
     MockMetadataServerTransportFactory transportFactory = new MockMetadataServerTransportFactory();
     final Queue<Integer> responseSequence = new ArrayDeque<>();
-    IntStream.rangeClosed(400, 600).forEach(i -> responseSequence.add(i));
+    rangeClosed(400, 600).forEach(new IntConsumer() {
+        @Override
+        public void accept(int i) {
+            responseSequence.add(i);
+        }
+    });
 
     while (!responseSequence.isEmpty()) {
       if (responseSequence.peek() == 503) {
